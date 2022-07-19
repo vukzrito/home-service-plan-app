@@ -15,48 +15,50 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Login } from './components/screens/login'
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
 import { Inspection } from './components/screens/inspection';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { Fixtures } from './components/screens/fixtures';
+import { Theme } from './theme';
+import { AddFixture } from './components/screens/add-fixture';
 
-const Section = ({ children, title }) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+export const routes = {
+  login: 'login',
+  fittings: 'fittings',
+  inspection: 'inspection',
+  addFitting: 'addFitting'
 };
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const Stack = createNativeStackNavigator();
+  const Tab = createMaterialTopTabNavigator();
 
+  function Tabs() {
+    return (
+      <Tab.Navigator screenOptions={{
+        tabBarLabelStyle: { color: Theme.colors.background },
+        tabBarStyle: { backgroundColor: Theme.colors.primary },
+        tabBarIndicatorStyle: { backgroundColor: Theme.colors.accent }
+      }}>
+        <Tab.Screen name="Property Info" component={Inspection} />
+        <Tab.Screen name={routes.fittings} options={{ tabBarLabel: 'Fittings/Fixtures' }} component={Fixtures} />
+      </Tab.Navigator>
+    );
+  }
   return (
-
- <Inspection ></Inspection>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={routes.inspection} component={Tabs} options={{
+          headerShown: true, headerTintColor: Theme.colors.background,
+          headerStyle: { backgroundColor: Theme.colors.primary }
+        }} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name={routes.addFitting} component={AddFixture} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
